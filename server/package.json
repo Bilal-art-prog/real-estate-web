@@ -1,0 +1,34 @@
+{
+  "name": "bilal-estate-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend for the Bilal Estate website: Prisma + SQLite (default) or PostgreSQL, Express API, JWT admin auth.",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:studio": "prisma studio",
+    "seed": "node seed.js",
+    "setup": "npm install && npx prisma migrate dev --name init && npm run seed"
+  },
+  "prisma": {
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.2.1",
+    "zod": "^3.24.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

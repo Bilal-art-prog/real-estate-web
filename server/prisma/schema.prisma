@@ -1,0 +1,140 @@
+// Bilal Estate — Prisma schema
+// Default provider is SQLite so `npm run setup` works with zero configuration.
+// For production, change provider to "postgresql" and set DATABASE_URL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // → "postgresql" for Neon / Supabase / Railway
+  url      = env("DATABASE_URL")
+}
+
+model Property {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  style        String?
+  signature    String?
+  materials    String   @default("[]") // JSON string (SQLite has no array type)
+  mood         String?
+  society      String
+  sector       String?
+  city         String   @default("Islamabad")
+  purpose      String // buy | rent | commercial | plot
+  type         String
+  price        Int
+  monthly      Boolean  @default(false)
+  beds         Int      @default(0)
+  baths        Int      @default(0)
+  parking      Int      @default(0)
+  area         Int // covered, sq ft
+  plotArea     Int?
+  marla        Float?
+  status       String   @default("Available")
+  featured     Boolean  @default(false)
+  premium      Boolean  @default(false)
+  year         Int?
+  possession   String?
+  furnished    Boolean  @default(false)
+  lat          Float?
+  lng          Float?
+  images       String   @default("[]")
+  poster       String?
+  visualStatus String   @default("concept") // concept | verified
+  description  String?
+  highlights   String   @default("[]")
+  amenities    String   @default("[]")
+  floorplan    String   @default("[]")
+  agentId      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  leads        Lead[]
+
+  @@index([purpose])
+  @@index([city, society])
+  @@index([price])
+}
+
+model Lead {
+  id            String    @id @default(cuid())
+  name          String
+  phone         String
+  email         String?
+  interest      String?
+  budget        String?
+  message       String?
+  propertyId    String?
+  propertyTitle String?
+  source        String    @default("website")
+  status        String    @default("new") // new | contacted | closed
+  ip            String?
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+  property      Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  type          String // whatsapp_click | call_click | page_view | lead_created | social_click
+  page          String?
+  placement     String?
+  propertyId    String?
+  propertyTitle String?
+  at            DateTime @default(now())
+
+  @@index([type, at])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  excerpt   String?
+  category  String?
+  body      String   @default("[]") // JSON array of paragraphs
+  cover     String?
+  author    String   @default("Bilal Estate")
+  published Boolean  @default(false)
+  postedAt  DateTime @default(now())
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  quote     String
+  name      String?
+  meta      String?
+  approved  Boolean  @default(false)
+  sort      Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Agent {
+  id         String  @id @default(cuid())
+  name       String
+  role       String?
+  languages  String  @default("[]")
+  phone      String?
+  photo      String?
+  bio        String?
+  speciality String?
+  isOwner    Boolean @default(false)
+  sort       Int     @default(0)
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
